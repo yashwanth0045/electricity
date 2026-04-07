@@ -31,6 +31,10 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+@cache.memoize(timeout=3600)
+def cached_model3():
+    return model3()
+
 @app.route('/')
 def index():
     return redirect('/dashbord')
@@ -39,7 +43,7 @@ def index():
 @cache.cached(timeout=120)
 @login_required
 def main():
-    current_month_peak,current_month_forecast,avg_temp_today = model3()
+    current_month_peak,current_month_forecast,avg_temp_today = cached_model3()
     current_month = datetime.now().strftime("%b")
     today = datetime.now()
     date = today.strftime("%d %b %y")
@@ -75,7 +79,7 @@ def main():
 @login_required
 def calc():
     if request.method=='GET':
-        current_month_peak,current_month_forecast,avg_temp_today = model3()
+        current_month_peak,current_month_forecast,avg_temp_today = cached_model3()
         current_month = datetime.now().strftime("%b")
         today = datetime.now()
         date = today.strftime("%d %b %y")
@@ -109,7 +113,7 @@ def calc():
 @login_required
 def calcmode():
     if request.method=='GET':
-        current_month_peak,current_month_forecast,avg_temp_today = model3()
+        current_month_peak,current_month_forecast,avg_temp_today = cached_model3()
         current_month = datetime.now().strftime("%b")
         today = datetime.now()
         date = today.strftime("%d %b %y")
@@ -143,6 +147,10 @@ def feedback():
 @login_required
 def settings():
     return render_template('settings.html')
+@app.route('/blogs', methods=['GET', 'POST'])
+@login_required
+def blogs():
+    return render_template('blogs.html')
 
 
 if __name__ == '__main__':

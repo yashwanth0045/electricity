@@ -34,10 +34,16 @@ def model1(val):
     end_date = start_date + relativedelta(months=val)
     weather_data = Daily(delhi_location, start=start_date, end=end_date)
     weather_data = weather_data.fetch()
-    weather_data.reset_index(inplace=True)
-    future = future.merge(weather_data[['time', 'tavg']], left_on='ds', right_on='time', how='left')
-    future.drop(columns=['time'], inplace=True)
-    future['tavg'] = future['tavg'].fillna(delhi['tavg'].mean())
+    if weather_data.empty:
+        future['tavg'] = delhi['tavg'].mean()
+    else:
+        weather_data.reset_index(inplace=True)
+        if 'time' in weather_data.columns and 'tavg' in weather_data.columns:
+            future = future.merge(weather_data[['time', 'tavg']], left_on='ds', right_on='time', how='left')
+            future.drop(columns=['time'], inplace=True)
+        else:
+            future['tavg'] = delhi['tavg'].mean()
+        future['tavg'] = future['tavg'].fillna(delhi['tavg'].mean())
     forecast = model.predict(future)
     fig = px.line(forecast, x='ds', y='yhat', title='Forecasted Energy Requirement')
     fig.update_layout(
@@ -68,10 +74,16 @@ def model2(val):
     end_date = start_date + relativedelta(months=val)
     weather_data = Daily(delhi_location, start=start_date, end=end_date)
     weather_data = weather_data.fetch()
-    weather_data.reset_index(inplace=True)
-    future = future.merge(weather_data[['time', 'tavg']], left_on='ds', right_on='time', how='left')
-    future.drop(columns=['time'], inplace=True)
-    future['tavg'] = future['tavg'].fillna(delhi['tavg'].mean())
+    if weather_data.empty:
+        future['tavg'] = delhi['tavg'].mean()
+    else:
+        weather_data.reset_index(inplace=True)
+        if 'time' in weather_data.columns and 'tavg' in weather_data.columns:
+            future = future.merge(weather_data[['time', 'tavg']], left_on='ds', right_on='time', how='left')
+            future.drop(columns=['time'], inplace=True)
+        else:
+            future['tavg'] = delhi['tavg'].mean()
+        future['tavg'] = future['tavg'].fillna(delhi['tavg'].mean())
     forecast = model.predict(future)
     fig = px.line(forecast, x='ds', y='yhat', title='Forecasted Peak')
     fig.update_layout(

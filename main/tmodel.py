@@ -65,7 +65,7 @@ def renewable(year):
     ren_df = ren_df[ren_df['State']=='Delhi']
     fil_df = ren_df.iloc[1:]
     delhi_df = fil_df[['Month','total']]
-    delhi_df = delhi_df.drop(1170)
+    delhi_df = delhi_df.drop(1170, errors='ignore')
     delhi_df.rename(columns={'Month':'ds','total':'y'},inplace=True)
     Gul = Prophet()
     Gul.fit(delhi_df[['ds','y']])
