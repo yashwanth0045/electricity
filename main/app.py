@@ -1,3 +1,5 @@
+import numpy as np
+np.NaN = np.nan
 from flask import Flask, redirect, render_template, request, jsonify,url_for
 from flask import session
 from table import *
@@ -44,7 +46,7 @@ def main():
     context = {
         "cur_peak" :f"{current_month_peak['yhat']:.2f} MWH",
         "cur_forec" : f"{current_month_forecast['yhat']:.2f} MWH",
-        "avg_temp" : f"{avg_temp_today:.2f}",
+        "avg_temp" : f"{avg_temp_today:.2f}" if isinstance(avg_temp_today, (int, float)) else str(avg_temp_today),
         "month" : current_month,
         "date" : date
     }
@@ -80,7 +82,7 @@ def calc():
         context = {
             "cur_peak" :f"{current_month_peak['yhat']:.2f} MWH",
             "cur_forec" : f"{current_month_forecast['yhat']:.2f} MWH",
-            "avg_temp" : f"{avg_temp_today:.2f}",
+            "avg_temp" : f"{avg_temp_today:.2f}" if isinstance(avg_temp_today, (int, float)) else str(avg_temp_today),
             "month" : current_month,
             "date" : date
         }
@@ -114,7 +116,7 @@ def calcmode():
         context = {
             "cur_peak" :f"{current_month_peak['yhat']:.2f} MWH",
             "cur_forec" : f"{current_month_forecast['yhat']:.2f} MWH",
-            "avg_temp" : f"{avg_temp_today:.2f}",
+            "avg_temp" : f"{avg_temp_today:.2f}" if isinstance(avg_temp_today, (int, float)) else str(avg_temp_today),
             "month" : current_month,
             "date" : date
         }
@@ -129,16 +131,18 @@ def calcmode():
         img1 = thermal(val)
         return render_template('toutput.html',img11=img1,img21=img2,img31=img3,img41=img4)
     
-# @app.route('/dashbord/solution')
-# @login_required
-# def sol():
-#     pass
-#     #idhar sirf html rahega 
+@app.route('/feedback', methods=['GET', 'POST'])
+@login_required
+def feedback():
+    if request.method == 'POST':
+        # Assuming you'd process feedback here
+        pass
+    return render_template('feedback.html')
 
-# @app.route('/dashbord/blogs')
-# @login_required
-# def blogs():
-#     pass
+@app.route('/settings', methods=['GET', 'POST'])
+@login_required
+def settings():
+    return render_template('settings.html')
 
 
 if __name__ == '__main__':
